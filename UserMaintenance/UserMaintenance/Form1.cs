@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,9 +17,9 @@ namespace UserMaintenance
 		public Form1()
 		{
 			InitializeComponent();
-			lblLastName.Text = Resource1.LastName;
-			lblFirstName.Text = Resource1.FirstName;
+			lblFullName.Text = Resource1.FullName;
 			btnAdd.Text = Resource1.Add;
+			btnExport.Text = Resource1.Export;
 
 			listUsers.DataSource = users;
 			listUsers.ValueMember = "ID";
@@ -29,10 +30,27 @@ namespace UserMaintenance
 		{
 			var u = new Entities.User()
 			{
-				LastName = txtBoxLastName.Text,
-				FirstName = txtBoxFirstName.Text
+				FullName = txtBoxFullName.Text,
 			};
 			users.Add(u);
+		}
+
+		private void btnExport_Click(object sender, EventArgs e)
+		{
+			SaveFileDialog sfd = new SaveFileDialog();
+			sfd.FileName = "nevsor";
+			sfd.DefaultExt = "txt";
+			if (sfd.ShowDialog() == DialogResult.OK)
+			{
+				using (StreamWriter sw = new StreamWriter(sfd.OpenFile()))
+				{
+					sw.WriteLine("ID;Név");
+					foreach (var User in users)
+					{
+						sw.WriteLine(User.ID + ";" + User.FullName);
+					}
+				}
+			}
 		}
 	}
 }
